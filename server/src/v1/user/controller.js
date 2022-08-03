@@ -1,6 +1,7 @@
 const User = require("../../../models/User");
 
 const {addUser,
+    getUserByName,
 }=require("./services");
 
 
@@ -26,6 +27,9 @@ const register = async (req,res)=>{
         return res.send(error)
     }
 
+}
+const getRestaurant =async(req,res)=>{
+    
 }
 
 module.exports={

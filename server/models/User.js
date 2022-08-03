@@ -14,6 +14,12 @@ const userSchema =new Schema({
         min: 6,
         max: 255,
       },
+      familyName:{
+        type: String,
+        require: true,
+        min: 6,
+        max: 255,
+      },
       email: {
         type: String,
         require: true,
