@@ -57,6 +57,11 @@ const  entitySchema= new Schema ({
     },
     websiteName:{
         type:String,
-    }
+    },
+    date: { 
+        type: Date,
+        default: Date.now ,
+    },
+
 })
 module.exports=mongoose.model("Entity",entitySchema,entities)

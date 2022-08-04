@@ -28,7 +28,17 @@ const register = async (req,res)=>{
     }
 
 }
-const getRestaurant =async(req,res)=>{
+const logIn =async(req,res)=>{
+    try {
+        const {email,hashedPassword}=body;
+        email=req.body.email;
+        hashedPassword=req.body.password;
+        
+
+    } catch (error) {
+        console.log(error)
+        return res.send(error)        
+    }
     
 }
 

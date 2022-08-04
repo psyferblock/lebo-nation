@@ -6,7 +6,8 @@ const userSchema =new Schema({
         type: Number,
         require: true,
         default: 0,
-        max: 1,
+       // max 100 for user type because we will have leveling up among users. i chose 100 as a precaution
+        max: 100,
       },
       userName: {
         type: String,
