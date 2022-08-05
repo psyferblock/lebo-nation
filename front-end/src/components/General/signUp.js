@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,35 +12,23 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 // this component is copied from Material UI components
 import Footer from "./footer";
-import { post } from "../../api/index";
+import validateForm from "../../validations/signup.validator";
+// import { post } from "../../api/index";
 
 
 const theme = createTheme();
 
 const Register = () => {
-
-
-  const initialValues = {
-    name: "",
-    last: "",
-    phone: "",
-    address: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  };
-  // const [userDetails, setUserDetails] = useState(initialValues);
+  // use State is used to store inf like variables, it takes initial value. And REact react listens for every change it re-rendres the component
   const [missingFields, setmissingFields] = useState(null);
 
 
 
-
-
   const handleSubmit = (event) => {
-    event.preventDefault(); // to prevent  refreshing the page, and loosing all the fetched data 
-    
+    event.preventDefault(); // to prevent  refreshing the page, and loosing all the fetched data
+
     const data = new FormData(event.currentTarget);
-    console.log({
+    const formData = {
       name: data.get("name"),
       last: data.get("last"),
       phone: data.get("phone"),
@@ -48,96 +36,18 @@ const Register = () => {
       email: data.get("email"),
       password: data.get("password"),
       confirmPassword: data.get("confirmPassword"),
-    });
-
-    const validatedForm = validateInput(data);
-    if( !validatedForm) {
-      setmissingFields(validatedForm)
-    } else
-      post(`${process.env.API_URL}`, data);
-
-
+    };
+    const validatedInput = validateForm(formData);
+    // console.log(validatedInput);
+    if (validatedInput) {
+      setmissingFields(validatedInput);
+    } else {
+      setmissingFields(null);
+      // post("/user.register", formData);
+    }
   };
 
 
-
-  const validateInput = (form) => {
-    
-  let sendError = {};
-
-  const name = form.name;
-  const last = form.last;
-  const phone = form.phone;
-  const address = form.address;
-  const email = form.email;
-  const password = form.password;
-  const confirmPassword = form.confirmPassword;
-  // console.log(req.form);
-
-  if (name && !isRequired(name)) {
-    sendError.name = "name is required";
-  }
-
-  if (last && !isRequired(last)) {
-    sendError.last = "last is required";
-  }
-
-  if (phone && !isRequired(phone)) {
-    sendError.phone = "phone is required";
-  }
-
-  if (address && !isRequired(address)) {
-    sendError.address = "address is required";
-  }
-  if (!isRequired(email)) {
-    sendError.email = "email is required";
-  } else if (!isEmailValid(email)) {
-    sendError.email = "email is invalid ";
-  }
-
-  if (!isRequired(password)) {
-    sendError.password = "password is required";
-  } else if (!isPasswordSecure(password)) {
-    sendError.password = "at least 1 big letter, 1 small letter, and 1 number";
-  }
-
-  if (confirmPassword && !isRequired(confirmPassword)) {
-    sendError.confirmPassword = "Please enter the password again";
-  } else if (!confirmPass(password, confirmPassword)) {
-    sendError.confirmPassword = "Confirm password does not match";
-  }
-
-
-  if (Object.keys(sendError).length !== 0) {
-
-      setmissingFields(sendError)
-  } else return true
-
-
-  }
-
-    const isRequired = (value) => {
-      return !value.toString().trim().length ? "require" : true;
-    };
-
-    function isEmailValid(email) {
-      const re =
-        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return re.test(String(email).toLowerCase());
-    }
-
-    function isPasswordSecure(password) {
-      let regex =
-        /^(?!.*\s)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹]).{8,16}$/;
-      return regex.test(password);
-    }
-
-    function confirmPass(pass1, pass2 ){
-	    return pass1.value.trim() === pass2.value.trim();
-    }
-
-
-  
 
   return (
     <ThemeProvider theme={theme}>
@@ -174,7 +84,11 @@ const Register = () => {
                   label="First Name"
                   autoFocus
                 />
-                <small className="text-red-500">{missingFields ? missingFields.name : ""}</small>
+                <small className="block text-red-500">
+                  {missingFields && missingFields.name
+                    ? `${missingFields.name}`
+                    : ""}
+                </small>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -185,6 +99,11 @@ const Register = () => {
                   name="last"
                   autoComplete="family-name"
                 />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.last
+                    ? `${missingFields.last}`
+                    : ""}
+                </small>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -195,6 +114,11 @@ const Register = () => {
                   name="phone"
                   autoComplete="phone"
                 />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.phone
+                    ? `${missingFields.phone}`
+                    : ""}
+                </small>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -205,6 +129,11 @@ const Register = () => {
                   name="address"
                   autoComplete="address"
                 />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.address
+                    ? `${missingFields.address}`
+                    : ""}
+                </small>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -215,6 +144,11 @@ const Register = () => {
                   name="email"
                   autoComplete="email"
                 />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.email
+                    ? `${missingFields.email}`
+                    : ""}
+                </small>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -226,6 +160,11 @@ const Register = () => {
                   id="password"
                   autoComplete="new-password"
                 />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.password
+                    ? `${missingFields.password}`
+                    : ""}
+                </small>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -237,6 +176,11 @@ const Register = () => {
                   id="confirmPassword"
                   autoComplete="new-confirmPassword"
                 />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.confirmPassword
+                    ? `${missingFields.confirmPassword}`
+                    : ""}
+                </small>
               </Grid>
 
               {/* <Grid item xs={12}>
@@ -269,6 +213,6 @@ const Register = () => {
       </Container>
     </ThemeProvider>
   );
-};
+};;
 
 export default Register;

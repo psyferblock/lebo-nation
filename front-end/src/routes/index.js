@@ -1,11 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/home";
-import SignUp from "./components/General/signUp";
-import NotFound from "./components/General/404page";
-import LogIn from "./components/General/logIn";
+import Home from "../pages/home";
+import SignUp from "../components/General/signUp";
+import NotFound from "../components/General/404page";
+import LogIn from "../components/General/logIn";
 
-
-function App() {
+function routes() {
   return (
     <Router>
       <Routes>
@@ -19,4 +18,4 @@ function App() {
   );
 }
 
-export default App;
+export default routes;
