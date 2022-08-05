@@ -1,10 +1,8 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -12,36 +10,44 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+// this component is copied from Material UI components
+import Footer from "./footer";
+import validateForm from "../../validations/signup.validator";
+// import { post } from "../../api/index";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 const theme = createTheme();
 
-export default function SignUp() {
+const Register = () => {
+  // use State is used to store inf like variables, it takes initial value. And REact react listens for every change it re-rendres the component
+  const [missingFields, setmissingFields] = useState(null);
+
+
+
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault(); // to prevent  refreshing the page, and loosing all the fetched data
+
     const data = new FormData(event.currentTarget);
-    console.log({
+    const formData = {
+      name: data.get("name"),
+      last: data.get("last"),
+      phone: data.get("phone"),
+      address: data.get("address"),
       email: data.get("email"),
       password: data.get("password"),
-    });
+      confirmPassword: data.get("confirmPassword"),
+    };
+    const validatedInput = validateForm(formData);
+    // console.log(validatedInput);
+    if (validatedInput) {
+      setmissingFields(validatedInput);
+    } else {
+      setmissingFields(null);
+      // post("/user.register", formData);
+    }
   };
+
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -71,23 +77,33 @@ export default function SignUp() {
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
-                  name="firstName"
+                  name="name"
                   required
                   fullWidth
-                  id="firstName"
+                  id="name"
                   label="First Name"
                   autoFocus
                 />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.name
+                    ? `${missingFields.name}`
+                    : ""}
+                </small>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   required
                   fullWidth
-                  id="lastName"
+                  id="last"
                   label="Last Name"
-                  name="lastName"
+                  name="last"
                   autoComplete="family-name"
                 />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.last
+                    ? `${missingFields.last}`
+                    : ""}
+                </small>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -98,6 +114,11 @@ export default function SignUp() {
                   name="phone"
                   autoComplete="phone"
                 />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.phone
+                    ? `${missingFields.phone}`
+                    : ""}
+                </small>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -108,6 +129,11 @@ export default function SignUp() {
                   name="address"
                   autoComplete="address"
                 />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.address
+                    ? `${missingFields.address}`
+                    : ""}
+                </small>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -118,17 +144,43 @@ export default function SignUp() {
                   name="email"
                   autoComplete="email"
                 />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.email
+                    ? `${missingFields.email}`
+                    : ""}
+                </small>
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
                   name="password"
-                  label="Password"
+                  label="Your Password"
                   type="password"
                   id="password"
                   autoComplete="new-password"
                 />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.password
+                    ? `${missingFields.password}`
+                    : ""}
+                </small>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="confirmPassword"
+                  type="password"
+                  id="confirmPassword"
+                  autoComplete="new-confirmPassword"
+                />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.confirmPassword
+                    ? `${missingFields.confirmPassword}`
+                    : ""}
+                </small>
               </Grid>
 
               {/* <Grid item xs={12}>
@@ -150,15 +202,17 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/user/login" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
+        <Footer />
       </Container>
     </ThemeProvider>
   );
-}
+};;
+
+export default Register;
