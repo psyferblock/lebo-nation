@@ -10,34 +10,40 @@ const validateForm = (form) => {
 
     // console.log("form = ", form);
 
-    if (!isRequired(name)) {
+    if (typeof name !== 'undefined' && !isRequired(name)) {
       sendError.name = "name is required";
     }
-    if (!isRequired(last)) {
+    if ("last" in form && last && !isRequired(last)) {
       sendError.last = "last is required";
     }
-    if (!isRequired(phone)) {
+    if (form.hasOwnProperty("phone") && !isRequired(phone)) {
       sendError.phone = "phone is required";
     }
-    if (!isRequired(address)) {
+    if (typeof address !== "undefined" && !isRequired(address)) {
       sendError.address = "address is required";
     }
-    if (!isRequired(email)) {
+    if (form.hasOwnProperty("email") && !isRequired(email)) {
       sendError.email = "email is required";
-    } else if (!isEmailValid(email)) {
+    } else if (form.hasOwnProperty("email") && !isEmailValid(email)) {
       sendError.email = "email is invalid ";
     }
 
-    if (!isRequired(password)) {
+    if (form.hasOwnProperty("password") && !isRequired(password)) {
       sendError.password = "password is required";
-    } else if (!isPasswordSecure(password)) {
+    } else if (form.hasOwnProperty("password") && !isPasswordSecure(password)) {
       sendError.password =
         "Your password must contain at least 1 big letter, 1 small letter, 1 number, and special character";
     }
 
-    if (!isRequired(confirmPassword)) {
-      sendError.confirmPassword = "Please enter the password again";
-    } else if (!confirmPass(password, confirmPassword)) {
+    if (
+      form.hasOwnProperty("confirmPassword") &&
+      !isRequired(confirmPassword)
+    ) {
+      sendError.confirmPassword = "Please enter the confirm password ";
+    } else if (
+      form.hasOwnProperty("confirmPassword") &&
+      !confirmPass(password, confirmPassword)
+    ) {
       sendError.confirmPassword = "Confirm password does not match";
     }
 
@@ -45,7 +51,7 @@ const validateForm = (form) => {
     if (Object.keys(sendError).length !== 0) {
       return sendError;
     } else {
-      return true;
+      return false;
     }
   };
 

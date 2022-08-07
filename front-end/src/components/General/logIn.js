@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -11,21 +12,47 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 // from Material ui components
-
+import { useNavigate } from "react-router-dom";
+import validateForm from "../../validations/formValidator";
 import Footer from "./footer";
+import { sendUser } from "../../api/axios"
 
 
 const theme = createTheme();
 
 const LogIn = () => {
+    let navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+const [missingFields, setmissingFields] = useState(null);
+
+
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    const formData = ({
       email: data.get("email"),
       password: data.get("password"),
     });
+
+      // first validate user's input for missing fields or invalid inputs before sending to te server
+    const checkInputErrors = validateForm(formData);
+    // console.log(checkInputErrors);
+    if (checkInputErrors) {
+      setmissingFields(checkInputErrors);
+    } else {
+      setmissingFields(null);
+    //   // if fields are validated, we can post a request to the server
+      const registerResponse = await sendUser("/user/login", formData);
+      // console.log(registerResponse)
+      if (registerResponse.authenticated) {
+        navigate(`/`);
+      } else {
+        setmissingFields({
+          password: registerResponse.message,
+        });
+      }
+    }
   };
 
   return (
@@ -44,7 +71,7 @@ const LogIn = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Log innpm 
+            Log in
           </Typography>
           <Box
             component="form"
@@ -52,26 +79,42 @@ const LogIn = () => {
             noValidate
             sx={{ mt: 1 }}
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="off"
+                  autoFocus
+                />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.email
+                    ? `${missingFields.email}`
+                    : ""}
+                </small>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="off"
+                />
+                <small className="block text-red-500">
+                  {missingFields && missingFields.password
+                    ? `${missingFields.password}`
+                    : ""}
+                </small>
+              </Grid>
+            </Grid>
             {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
@@ -98,7 +141,7 @@ const LogIn = () => {
             </Grid>
           </Box>
         </Box>
-        <Footer  />
+        <Footer />
       </Container>
     </ThemeProvider>
   );

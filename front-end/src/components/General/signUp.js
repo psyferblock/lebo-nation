@@ -11,20 +11,23 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 // this component is copied from Material UI components
+import { useNavigate } from "react-router-dom";
 import Footer from "./footer";
-import validateForm from "../../validations/signup.validator";
-// import { post } from "../../api/index";
+import validateForm from "../../validations/formValidator";
+import { sendUser } from "../../api/axios";
 
 
 const theme = createTheme();
 
 const Register = () => {
+    let navigate = useNavigate();
+
   // use State is used to store inf like variables, it takes initial value. And REact react listens for every change it re-rendres the component
   const [missingFields, setmissingFields] = useState(null);
 
 
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault(); // to prevent  refreshing the page, and loosing all the fetched data
 
     const data = new FormData(event.currentTarget);
@@ -37,13 +40,24 @@ const Register = () => {
       password: data.get("password"),
       confirmPassword: data.get("confirmPassword"),
     };
-    const validatedInput = validateForm(formData);
-    // console.log(validatedInput);
-    if (validatedInput) {
-      setmissingFields(validatedInput);
+    // first validate user's input for missing fields or invalid inputs before sending to te server
+    const checkInputErrors = validateForm(formData);
+
+    if (checkInputErrors) {
+      setmissingFields(checkInputErrors);
     } else {
       setmissingFields(null);
-      // post("/user.register", formData);
+      // if fields are validated, we can post a request to the server
+      const registerResponse = await sendUser("/user/register", formData);
+      // console.log(registerResponse)
+      if (registerResponse.authenticated) {
+        navigate(`/`);
+      } else {
+        setmissingFields({
+          confirmPassword: registerResponse.message,
+        });
+      }
+
     }
   };
 
@@ -176,7 +190,7 @@ const Register = () => {
                   id="confirmPassword"
                   autoComplete="new-confirmPassword"
                 />
-                <small className="block text-red-500">
+                <small className="block text-center text-red-500">
                   {missingFields && missingFields.confirmPassword
                     ? `${missingFields.confirmPassword}`
                     : ""}
@@ -192,6 +206,7 @@ const Register = () => {
                 />
               </Grid> */}
             </Grid>
+
             <Button
               type="submit"
               fullWidth
