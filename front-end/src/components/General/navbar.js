@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 // Link is used to navigate to another route (url)
 
 
-function navbar() {
+const Navbar = () => {
   return (
-    <header className="w-full mx-auto flex flex-wrap p-5 flex-col md:flex-row justify-between bg-indigo-500 ">
-      <span className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+    <header className="w-full mx-auto flex flex-wrap p-2 flex-col md:flex-row justify-between bg-indigo-500 ">
+      <span className="flex title-font font-medium items-center text-gray-900 mb-3 md:mb-0">
         <span className="ml-3 text-xl text-white">Dashboard</span>
       </span>
       <div>
@@ -25,6 +25,6 @@ function navbar() {
       </div>
     </header>
   );
-}
+};
 
-export default navbar
+export default Navbar

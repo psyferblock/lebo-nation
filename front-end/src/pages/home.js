@@ -4,6 +4,7 @@ import Footer from "../components/General/footer";
 import Carousel from "../components/General/carousel";
 import Navbar from "../components/General/navbar";
 import NavigationMenu from "../components/General/navigationMenu"
+import MenuSection from "../components/Menu-section/menu";
 
 const Home = () => {
 
@@ -16,6 +17,7 @@ const Home = () => {
         <Navbar />
         <Carousel />
         <NavigationMenu />
+        <MenuSection />
         <Footer />
       </div>
     </div>
